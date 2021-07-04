@@ -1,5 +1,5 @@
 #include <WiFi.h>
-// Tienen que agregar este archivo con las dos variables correspondientes a su red WiFi:
+// Tienen que agregar WiFiConfig.h en la carpeta include/ con las dos variables correspondientes a su red WiFi:
 // const char* SSID = "SSID";
 // const char* PASSWORD = "PASSWORD";
 #include "WiFiConfig.h"
@@ -42,7 +42,7 @@ void loop() {
 
   // Leer los sensores RFID.
   // Si lee algo procesar la informacion y proceder con la logica correspondiente.
-  // if () {
-  //   //
+  // if (RFID leido) {
+  //   // Acumular datos en buffer
   // }
 }
