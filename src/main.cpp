@@ -5,11 +5,12 @@
 #include "WiFiConfig.h"
 #include "Rdm6300.h"
 #include <LiquidCrystal_I2C.h>
+#include <Keypad.h>
 
 // Descomentar para utilizar el sketch de analisis del address del lcd.
 // #define LCD_ADDRESS_SCANNER
 #ifdef LCDSCANNER_ENABLED
-  #include "LCDScanner.h"
+#include "LCDScanner.h"
 #endif
 
 // Defino el pin GPIO-09 como pin de RX para la comunicacion con el RDM6300.
@@ -18,6 +19,20 @@ Rdm6300 rdm6300;
 
 // Especifico el address obtenido con el LCDScanner, el numero de columnas y el numero de lineas.
 LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+// Especifico el tipo de Keypad a utilizar, sus dimensiones, y los valores de cada tecla.
+// Aunque el keypad que vamos a utilizar es 4x3, por ahora lo mantengo como 4x4 hasta probarlo.
+const byte ROWS = 4;
+const byte COLS = 4;
+char keyPadMapping[ROWS][COLS] = {
+  { '1', '2', '3', 'A' },
+  { '4', '5', '6', 'B' },
+  { '7', '8', '9', 'C' },
+  { '*', '0', '#', 'D' }
+};
+byte rowPins[ROWS] = { 23, 22, 3, 21 };
+byte colPins[COLS] = { 19, 18, 5, 17 };
+Keypad keyPad = Keypad(makeKeymap(keyPadMapping), rowPins, colPins, ROWS, COLS);
 
 void setup() {
   // Para conocer el address del lcd.
@@ -80,6 +95,12 @@ void loop() {
   if (rdm6300.update()) {
     // Serial.println(rdm6300.getTagId(), HEX);
     lcd.print(rdm6300.getTagId(), HEX);
+  }
+
+  // Con la funcion getKey obtengo la tecla que se esta presionando (si se esta presionando alguna).
+  char key = keyPad.getKey();
+  if (key) {
+    Serial.println(key);
   }
 
   // En el futuro capaz no haga falta el delay porque la misma logica hara mas largo el loop.
