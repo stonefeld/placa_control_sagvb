@@ -3,10 +3,18 @@
 // const char* SSID = "SSID";
 // const char* PASSWORD = "PASSWORD";
 #include "WiFiConfig.h"
+#include "Rdm6300.h"
+
+// Defino el pin GPIO-09 como pin de RX para la comunicacion con el RDM6300.
+#define RDM6300_RX_PIN 9
+Rdm6300 rdm6300;
 
 void setup() {
   // Inicializo la comunicacion serial.
   Serial.begin(115200);
+  
+  // Configuro el lector de RFID (RDM6300).
+  rdm6300.begin(RDM6300_RX_PIN);
 
   // Configuro el modulo WiFi.
   WiFi.mode(WIFI_STA);
@@ -34,15 +42,18 @@ void setup() {
 
 void loop() {
   // Verifcar que la conexion siga estable.
-  // if (WiFi.status() == WL_CONNECTED) {
-  //   // En caso de no estar conectado tiene que guardar en un buffer las entradas y datos que registre
-  //   // para enviarlos cuando recupere la conexion.
-  //   // Por lo tanto aca va a realizar los request al servidor.
-  // }
+  if (WiFi.status() == WL_CONNECTED) {
+    // En caso de no estar conectado tiene que guardar en un buffer las entradas y datos que registre
+    // para enviarlos cuando recupere la conexion.
+    // Por lo tanto aca va a realizar los request al servidor.
+  }
 
   // Leer los sensores RFID.
   // Si lee algo procesar la informacion y proceder con la logica correspondiente.
-  // if (RFID leido) {
-  //   // Acumular datos en buffer
-  // }
+  // Por el momento solo imprimo por pantalla el valor.
+  if (rdm6300.update())
+    Serial.println(rdm6300.getTagId(), HEX);
+
+  // En el futuro capaz no haga falta el delay porque la misma logica hara mas largo el loop.
+  delay(10);
 }
