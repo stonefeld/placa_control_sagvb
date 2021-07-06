@@ -1,3 +1,6 @@
+#ifndef LCDSCANNER_H
+#define LCDSCANNER_H
+
 #include <Arduino.h>
 #include <Wire.h>
 
@@ -43,3 +46,5 @@ namespace LCDScanner {
   }
 
 }
+
+#endif
