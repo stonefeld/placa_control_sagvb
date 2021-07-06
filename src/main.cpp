@@ -5,11 +5,21 @@
 #include "WiFiConfig.h"
 #include "Rdm6300.h"
 
+// Descomentar para utilizar el sketch de analisis del address del lcd.
+// #define LCD_ADDRESS_SCANNER
+#ifdef LCD_ADDRESS_SCANNER
+  #include "LCDScanner.h"
+#endif
+
 // Defino el pin GPIO-09 como pin de RX para la comunicacion con el RDM6300.
 #define RDM6300_RX_PIN 9
 Rdm6300 rdm6300;
 
 void setup() {
+  // Para conocer el address del lcd.
+#ifdef LCD_ADDRESS_SCANNER
+  LCDScanner::begin();
+#else
   // Inicializo la comunicacion serial.
   Serial.begin(115200);
   
@@ -38,9 +48,14 @@ void setup() {
   Serial.print(WiFi.localIP());
   Serial.print(". My hostname is: ");
   Serial.print(WiFi.getHostname());
+#endif
 }
 
 void loop() {
+  // Para conocer el address del lcd.
+#ifdef LCD_ADDRESS_SCANNER
+  LCDScanner::scan();
+#else
   // Verifcar que la conexion siga estable.
   if (WiFi.status() == WL_CONNECTED) {
     // En caso de no estar conectado tiene que guardar en un buffer las entradas y datos que registre
@@ -51,9 +66,11 @@ void loop() {
   // Leer los sensores RFID.
   // Si lee algo procesar la informacion y proceder con la logica correspondiente.
   // Por el momento solo imprimo por pantalla el valor.
-  if (rdm6300.update())
+  if (rdm6300.update()) {
     Serial.println(rdm6300.getTagId(), HEX);
+  }
 
   // En el futuro capaz no haga falta el delay porque la misma logica hara mas largo el loop.
   delay(10);
+#endif
 }
