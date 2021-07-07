@@ -26,7 +26,7 @@ En esta sección les explico que necesitan para poder compilar el código.
 ## Aclaraciones
 Para poder compilar el código necesitan tener en cuenta los siguientes puntos:
 * En el repositorio van a encontrar cinco carpetas:
-  * `.vscode`: Acá el único archivo que debería haber es el `extensions.json` que le informa a VSCode que estamos utilizando la extension de `platformio-ide`.
+  * [`.vscode`](https://github.com/stonefeld/placa_control_sagvb/tree/master/.vscode): Acá el único archivo que debería haber es el [`extensions.json`](https://github.com/stonefeld/placa_control_sagvb/tree/master/.vscode/extensions.json) que le informa a VSCode que estamos utilizando la extension de `platformio-ide`.
   * [`include`](https://github.com/stonefeld/placa_control_sagvb/tree/master/include): En esta carpeta van los header files (`.h`/`.hpp`) donde deberían ver un `README`, `LCDScanner.h`:
     * [`LCDScanner.h`](https://github.com/stonefeld/placa_control_sagvb/tree/master/include/LCDScanner.h): Es tan solo un simple header file con un namespace para diferenciar las funciones de otras funciones similares preexistentes, que en el caso ideal deberíamos utilizarlo una única vez para conocer el address del LCD para la comunicación I2C.
   * [`lib`](https://github.com/stonefeld/placa_control_sagvb/tree/master/lib): En esta carpeta es donde debemos escribir nuestras librerias personales para el proyecto. Por el momento debería haber una sola librería:
