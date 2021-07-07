@@ -1,7 +1,7 @@
 #include "Rdm6300.h"
 #include <Arduino.h>
 
-void Rdm6300::begin(Stream* stream)
+void RDM6300::begin(Stream* stream)
 {
   m_Stream = stream;
   if (!m_Stream)
@@ -11,7 +11,7 @@ void Rdm6300::begin(Stream* stream)
   m_Stream->setTimeout(RDM6300_READ_TIMEOUT);
 }
 
-void Rdm6300::begin(int rx_pin, uint8_t uart_nr)
+void RDM6300::begin(int rx_pin, uint8_t uart_nr)
 {
   // Inicializo la comunicacion serial para el RDM6300. Por default usara el uart1 y utilizara unicamente
   // pin de RX y seteo el timeout a 20ms.
@@ -36,7 +36,7 @@ void Rdm6300::begin(int rx_pin, uint8_t uart_nr)
   begin(m_Stream);
 }
 
-void Rdm6300::end()
+void RDM6300::end()
 {
   // Cierro la comunicacion serial.
   m_Stream = NULL;
@@ -50,7 +50,7 @@ void Rdm6300::end()
 #endif
 }
 
-bool Rdm6300::update()
+bool RDM6300::update()
 {
   char buff[RDM6300_PACKET_SIZE];
   uint32_t tag_id;
@@ -129,12 +129,12 @@ bool Rdm6300::update()
   return tag_id;
 }
 
-bool Rdm6300::isTagNear()
+bool RDM6300::isTagNear()
 {
   return millis() - m_LastReadMs < RDM6300_NEXT_READ_MS;
 }
 
-uint32_t Rdm6300::getTagId()
+uint32_t RDM6300::getTagId()
 {
   // Simplemente devuelve el valor que tiene guardado del tag leido y reinicia su valor para poder obtener uno nuevo.
   uint32_t tag_id = m_TagId;

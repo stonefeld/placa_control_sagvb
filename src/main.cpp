@@ -3,7 +3,7 @@
 // const char* SSID = "SSID";
 // const char* PASSWORD = "PASSWORD";
 #include "WiFiConfig.h"
-#include "Rdm6300.h"
+#include "RDM6300.h"
 #include <LiquidCrystal_I2C.h>
 #include <Keypad.h>
 
@@ -15,7 +15,7 @@
 
 // Defino el pin GPIO-09 como pin de RX para la comunicacion con el RDM6300.
 #define RDM6300_RX_PIN 9
-Rdm6300 rdm6300;
+RDM6300 rdm6300;
 
 // Especifico el address obtenido con el LCDScanner, el numero de columnas y el numero de lineas.
 LiquidCrystal_I2C lcd(0x27, 16, 2);
@@ -30,6 +30,7 @@ char keyPadMapping[ROWS][COLS] = {
   { '7', '8', '9', 'C' },
   { '*', '0', '#', 'D' }
 };
+// En ambos casos asignamos segun la numeracion por GPIO.
 byte rowPins[ROWS] = { 23, 22, 3, 21 };
 byte colPins[COLS] = { 19, 18, 5, 17 };
 Keypad keyPad = Keypad(makeKeymap(keyPadMapping), rowPins, colPins, ROWS, COLS);

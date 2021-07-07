@@ -25,7 +25,7 @@
 #define RDM6300_NEXT_READ_MS    220
 #define RDM6300_READ_TIMEOUT    20
 
-class Rdm6300
+class RDM6300
 {
 public:
   void begin(Stream* stream);
