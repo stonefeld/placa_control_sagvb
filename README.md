@@ -108,6 +108,12 @@ Acá dejamos imágenes que podrían ser útiles para utilizar posteriormente al 
 
 ![Esquema de conexión ESP32 a LCD via I2C](https://www.electronics-lab.com/wp-content/uploads/2019/05/ESP32-LCD_bb.png)
 
+----
+
+**Esquema de conexión del ESP32 al HC-SR04**
+
+![Esquema de conexión del ESP32 al HC-SR04](https://content.instructables.com/ORIG/FYZ/6XM7/JFIIWB5N/FYZ6XM7JFIIWB5N.png?auto=webp&frame=1&fit=bounds&md=4fefe810924efb0dd3bc8fc2e4f11342)
+
 ## Links
 Acá dejamos los links que corresponden a las guías definitivas que utilizamos para cada sección del programa para tenerlos a mano en caso de necesitarlos.
 
@@ -117,3 +123,4 @@ Acá dejamos los links que corresponden a las guías definitivas que utilizamos 
 * [Tabla de caracteres ASCII](https://asciitable.com).
 * [Guía de utilización del LCD 16x2 con comunicación por I2C](https://www.electronics-lab.com/project/using-16x2-i2c-lcd-display-esp32/).
 * [Guía de configuración del KeyPad 4x4](https://diyi0t.com/keypad-arduino-esp8266-esp32/).
+* [Guía de configuración del sensor de distancia](https://www.instructables.com/ESP32-With-Ultrasonic-Sensor/) (está un poco desactualizado y los comentarios están en portugués pero sirve igual).
