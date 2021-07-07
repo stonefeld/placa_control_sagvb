@@ -50,14 +50,14 @@ Para poder compilar el proyecto luego de haber hecho el `git clone` en la ubicac
 
 Cuando tengan el proyecto abierto bajo PlatformIO, en el statusbar abajo del todo en VSCode debería aparecerles los íconos correspondientes para poder compilar, subir, limpiar y monitorear el proyecto. De todos modos pueden usar las mismas funcionalidades desde el apartado de extensiones de PlatformIO.
 
-Tengan en cuenta que el proyecto lo dividí en dos secciones, ya que como vamos a utilizar comunicación por I2C para el LCD y necesitamos conocer el address. Por lo tanto, para evitar crear un proyecto nuevo, o tenerlo como un sketch aparte para subir, cree el:
+Tengan en cuenta que el proyecto lo dividí en dos secciones, ya que como vamos a utilizar comunicación por I2C para el LCD y necesitamos conocer el address. Por lo tanto, para evitar crear un proyecto nuevo, o tenerlo como un sketch aparte para subir, cree el siguiente define:
 ```cpp
 // Descomentar para utilizar el sketch de analisis del address del lcd.
 #define LCDSCANNER_ENABLED
 ```
 Por lo tanto, cuando querramos compilar el código para conocer el address del LCD descomentamos esa línea de código. Una vez que lo conozcamos y lo hayamos reemplazado en el programa lo volvemos a comentar, y la sección del código correspondiente al mismo no será compilado para disminuir el espacio utilizado en la memoria flash.
 
-El último punto a tomar en cuenta es el que respecta al uso de WiFi. Para esto deben agregar un archivo en la carpeta [`include`](https://github.com/stonefeld/placa_control_sagvb/tree/master/include) con un archivo llamado `WiFiConfig.h` el cual debe contener las siguientes líneas de código:
+El último punto a tomar en cuenta es el que respecta al uso de WiFi. Para esto deben agregar un archivo en la carpeta [`include`](https://github.com/stonefeld/placa_control_sagvb/tree/master/include) llamado `WiFiConfig.h` el cual debe contener las siguientes líneas de código:
 ```cpp
 const char* SSID = "SSID";
 const char* PASSWORD = "PASSWORD";
@@ -80,3 +80,4 @@ Está más que claro que en los strings correspondientes a cada variable deben e
 - [ ] Pensar ubicación y distribución de las placas.
 - [ ] Ensamblar todo.
 - [ ] Instalación en el club alemán.
+- [ ] Agregar links a las páginas de donde sacamos la información. (Optativo)
