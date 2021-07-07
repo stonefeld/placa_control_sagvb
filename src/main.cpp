@@ -6,6 +6,7 @@
 #include "RDM6300.h"
 #include <LiquidCrystal_I2C.h>
 #include <Keypad.h>
+#include <Ultrasonic.h>
 
 // Descomentar para utilizar el sketch de analisis del address del lcd.
 // #define LCD_ADDRESS_SCANNER
@@ -34,6 +35,13 @@ char keyPadMapping[ROWS][COLS] = {
 byte rowPins[ROWS] = { 23, 22, 3, 21 };
 byte colPins[COLS] = { 19, 18, 5, 17 };
 Keypad keyPad = Keypad(makeKeymap(keyPadMapping), rowPins, colPins, ROWS, COLS);
+
+// Defino los pines a utilizar por el sensor de distancia.
+#define ULTRASONIC_TRIGGER_PIN    4
+#define ULTRASONIC_ECHO_PIN       5
+unsigned int distance = 0;
+// Inicializo el sensor de distancia.
+Ultrasonic ultrasonic(ULTRASONIC_TRIGGER_PIN, ULTRASONIC_ECHO_PIN);
 
 void setup() {
   // Para conocer el address del lcd.
@@ -103,6 +111,9 @@ void loop() {
   if (key) {
     Serial.println(key);
   }
+
+  // Obtengo la distancia que mide el sensor ultrasonico.
+  distance = ultrasonic.read(CM);
 
   // En el futuro capaz no haga falta el delay porque la misma logica hara mas largo el loop.
   delay(10);
