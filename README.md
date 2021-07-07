@@ -8,6 +8,8 @@ Este es el código para la placa de control del sistema de estacionamiento de SA
 * [Aclaraciones](#aclaraciones)
 * [Instalación](#instalación)
 * [Tareas](#tareas)
+* [Imágenes](#imágenes)
+* [Links](#links)
 
 ## Requerimientos
 En esta sección les explico que necesitan para poder compilar el código.
@@ -80,4 +82,38 @@ Está más que claro que en los strings correspondientes a cada variable deben e
 - [ ] Pensar ubicación y distribución de las placas.
 - [ ] Ensamblar todo.
 - [ ] Instalación en el club alemán.
-- [ ] Agregar links a las páginas de donde sacamos la información. (Optativo)
+
+## Imágenes
+Acá dejamos imágenes que podrían ser útiles para utilizar posteriormente al momento del ensamblaje.
+
+**ESP32 Pinout**
+
+![ESP32 Pinout](https://i.pinimg.com/originals/c6/57/83/c657835e84aaf91832a770ea0d7d0767.jpg)
+
+----
+
+**ESP8266 Pinout**
+
+![ESP8266 Pinout](https://www.teachmemicro.com/wp-content/uploads/2018/04/NodeMCUv3.0-pinout.jpg)
+
+----
+
+**RDM6300 Pinout**
+
+![RDM6330 Pinout](https://circuitdigest.com/sites/default/files/inlineimages/u3/RDM6300-RFID-Reader-Module.jpg)
+
+----
+
+**Esquema de conexión ESP32 a LCD via I2C**
+
+![Esquema de conexión ESP32 a LCD via I2C](https://www.electronics-lab.com/wp-content/uploads/2019/05/ESP32-LCD_bb.png)
+
+## Links
+Acá dejamos los links que corresponden a las guías definitivas que utilizamos para cada sección del programa para tenerlos a mano en caso de necesitarlos.
+
+* [Conexión del ESP a WiFi](https://www.megunolink.com/articles/wireless/how-do-i-connect-to-a-wireless-network-with-the-esp32/).
+* Para la configuración del RDM6300 me basé en [esta guía](https://circuitdigest.com/microcontroller-projects/interfacing-rdm6300-rfid-reader-module-interfacing-with-arduino-nano) y en el código de [este repositorio](https://github.com/arduino12/rdm6300/blob/master/src/rdm6300.cpp).
+* [Datasheet del RMD6300](http://j5d2v7d7.stackpathcdn.com/wp-content/uploads/2015/09/RDM630-datasheet.pdf).
+* [Tabla de caracteres ASCII](https://asciitable.com).
+* [Guía de utilización del LCD 16x2 con comunicación por I2C](https://www.electronics-lab.com/project/using-16x2-i2c-lcd-display-esp32/).
+* [Guía de configuración del KeyPad 4x4](https://diyi0t.com/keypad-arduino-esp8266-esp32/).
