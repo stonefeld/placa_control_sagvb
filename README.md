@@ -119,7 +119,7 @@ Acá dejamos los links que corresponden a las guías definitivas que utilizamos 
 
 * [Conexión del ESP a WiFi](https://www.megunolink.com/articles/wireless/how-do-i-connect-to-a-wireless-network-with-the-esp32/).
 * Para la configuración del RDM6300 me basé en [esta guía](https://circuitdigest.com/microcontroller-projects/interfacing-rdm6300-rfid-reader-module-interfacing-with-arduino-nano) y en el código de [este repositorio](https://github.com/arduino12/rdm6300/blob/master/src/rdm6300.cpp).
-* [Datasheet del RMD6300](http://j5d2v7d7.stackpathcdn.com/wp-content/uploads/2015/09/RDM630-datasheet.pdf).
+* [Datasheet del RDM6300](http://j5d2v7d7.stackpathcdn.com/wp-content/uploads/2015/09/RDM630-datasheet.pdf).
 * [Tabla de caracteres ASCII](https://asciitable.com).
 * [Guía de utilización del LCD 16x2 con comunicación por I2C](https://www.electronics-lab.com/project/using-16x2-i2c-lcd-display-esp32/).
 * [Guía de configuración del KeyPad 4x4](https://diyi0t.com/keypad-arduino-esp8266-esp32/).
