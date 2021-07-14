@@ -8,7 +8,7 @@ class ServerClient
 public:
   ServerClient(const char* hostname, const char* path, const uint16_t port);
 
-  bool connect(void);
+  void connect(void);
   void sendRequest(int tipo, uint32_t dato, int direccion, const char* method);
   String readResponse(void);
   bool getStatus(void);

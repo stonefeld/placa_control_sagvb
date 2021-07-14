@@ -71,14 +71,14 @@ Está más que claro que en los strings correspondientes a cada variable deben e
 - [x] Configurar la plataforma.
 - [x] Configurar el repositorio.
 - [x] Soporte para WiFi.
-- [ ] Soporte para realizar Requests HTTP por WiFi.
+- [x] Soporte para realizar Requests HTTP por WiFi.
 - [ ] Soporte para el socket TCP.
 - [x] Soporte para RDM6300.
 - [x] Soporte para LCD por comunicación I2C.
 - [x] Soporte para teclado matricial 4x4.
 - [ ] Cambiar configuración para soportar teclado matricial 4x3.
 - [x] Soporte para sensor de distancia HC-SR04.
-- [ ] Programar la lógica que debe seguir el dispositivo en el sistema definitivo.
+- [x] Programar la lógica que debe seguir el dispositivo en el sistema definitivo.
 - [ ] Pensar ubicación y distribución de las placas.
 - [ ] Ensamblar todo.
 - [ ] Instalación en el club alemán.

@@ -7,7 +7,7 @@ ServerClient::ServerClient(const char* hostname, const char* path, uint16_t port
   m_Port = port;
 }
 
-bool ServerClient::connect()
+void ServerClient::connect()
 {
   m_Client->stop();
 
