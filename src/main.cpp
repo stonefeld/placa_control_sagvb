@@ -1,5 +1,4 @@
 // Librerias.
-#include <WiFi.h>
 #include "ServerClient.h"
 #include "RDM6300.h"
 #include <LiquidCrystal_I2C.h>
@@ -25,9 +24,13 @@
 // Declaro las variables para los requests al servidor.
 const uint16_t HTTP_PORT   = 80;
 const char*    HTTP_METHOD = "GET";
-const char*    HOST_NAME   = "server9julio.ddns.net"; // Esto es solo conceptual, mas adelante va a haber que cambiarlo por la IP de la Raspberry.
-const char*    PATH_NAME   = "/estacionamiento";
+const char*    HOST_NAME   = "server9julio.ddns.net";
+const char*    PATH_NAME   = "/estacionamiento/";
 ServerClient client = ServerClient(HOST_NAME, PATH_NAME, HTTP_PORT);
+
+// Variables para evitar realizar varios requests en simultaneo.
+unsigned long lastTime = 0;
+unsigned long waitDelay = 5000;
 
 // Defino el pin GPIO-09 como pin de RX para la comunicacion con el RDM6300.
 #define RDM6300_RX_PIN 9
@@ -37,7 +40,6 @@ RDM6300 rdm6300;
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 // Especifico las dimensiones del keypad.
-// Aunque el keypad que vamos a utilizar es 4x3, por ahora lo mantengo como 4x4 hasta probarlo.
 const byte ROWS = 4;
 const byte COLS = 4;
 KeypadWrapper keypad = KeypadWrapper(ROWS, COLS);
@@ -46,7 +48,6 @@ KeypadWrapper keypad = KeypadWrapper(ROWS, COLS);
 #define ULTRASONIC_TRIGGER_PIN 4
 #define ULTRASONIC_ECHO_PIN    5
 unsigned int distance = 0;
-// Inicializo el sensor de distancia.
 Ultrasonic ultrasonic(ULTRASONIC_TRIGGER_PIN, ULTRASONIC_ECHO_PIN);
 
 void setup() {
@@ -67,9 +68,6 @@ void setup() {
   // Conecto el dispositivo a la red WiFi.
   Utils::connectWiFi(SSID, PASSWORD);
 
-  // Conecto al dispositivo al servidor.
-  client.connect();
-
   // Mensaje de inicio.
   Utils::printLCD(&lcd, "Apoye tarjeta o\nintgrese DNI", 0, 0, true);
 #endif
@@ -80,8 +78,8 @@ void loop() {
 #ifdef LCDSCANNER_ENABLED
   LCDScanner::scan();
 #else
-  static int tipo = 4; // (Nr de Tarjeta = 0, DNI = 1, Proveedor = 3, Ninguno = 4)
-  static uint32_t dato = 0;
+  static int tipo = 0; // (Nr de Tarjeta = 0, DNI = 1, Proveedor = 3, Ninguno = 4)
+  static uint32_t dato = 98765432;
 
   if (rdm6300.update()) {
     // Leer los sensores RFID.
@@ -89,7 +87,6 @@ void loop() {
     dato = rdm6300.getTagId();
     Serial.println(dato, HEX);
     Utils::printLCD(&lcd, "Apoye tarjeta o\nintgrese DNI", 0, 0, true);
-
   } else {
     // Si no leyo ningun tag de rfid verifico si alguna tecla fue presionada.
     switch (keypad.getInput())
@@ -99,11 +96,9 @@ void loop() {
       if (keypad.getCodeLength() == 0) {
         Utils::printLCD(&lcd, "Codigo:        ", 0, 0, true);
         Utils::printLCD(&lcd, String(keypad.getLastKey()).c_str(), keypad.getCodeLength(), 1, false);
-
       } else if (keypad.getLastKey() == keypad.enterKey) {
         // Si la tecla que se presiono era ENTER no escribo el caracter por pantalla y le informo que presione ENTER.
         Utils::printLCD(&lcd, "Presione ENTER  ", 0, 0, false);
-
       }
       break;
 
@@ -121,27 +116,22 @@ void loop() {
     }
   }
 
-  // Verifcar que la conexion siga estable.
-  if (WiFi.status() == WL_CONNECTED) {
-    
-    // En caso de no estar conectado tiene que guardar en un buffer las entradas y datos que registre
-    // para enviarlos cuando recupere la conexion.
-    // Por lo tanto aca va a realizar los request al servidor.
-    if (client.getStatus() && tipo != 4) {
-
-      client.sendRequest(tipo, dato, DIRECCION, HTTP_METHOD);
+  // Verifico que haya pasado cierto tiempo desde la ultima vez que se envio el dato.
+  if ((millis() - lastTime) > waitDelay) {
+    // Verifcar que la conexion siga estable.
+    if (Utils::getWiFiStatus()) {
+      // En caso de no estar conectado tiene que guardar en un buffer las entradas y datos que registre
+      // para enviarlos cuando recupere la conexion.
+      String response = client.sendRequest(tipo, dato, DIRECCION, HTTP_METHOD);
       Utils::printLCD(&lcd, "Espere...", 0, 0, true);
-      Serial.println(client.readResponse());
-
+      Serial.println(response);
     } else {
-      // Si el dispositivo esta desconectado del servidor tengo que reconectarlo.
-      Serial.println("Disconnected from the server");
-      client.connect();
+      // Si el dispositivo esta desconectado de la red WiFi tengo que reconectarlo.
+      Serial.println("Disconnected from the network");
+      Utils::connectWiFi(SSID, PASSWORD);
     }
-  } else {
-    // Si el dispositivo esta desconectado de la red WiFi tengo que reconectarlo.
-    Serial.println("Disconnected from the Network");
-    Utils::connectWiFi(SSID, PASSWORD);
+
+    lastTime = millis();
   }
 #endif
 }

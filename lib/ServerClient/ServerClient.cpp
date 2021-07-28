@@ -1,5 +1,7 @@
 #include "ServerClient.h"
 
+#include <HTTPClient.h>
+
 ServerClient::ServerClient(const char* hostname, const char* path, uint16_t port)
 {
   m_Hostname = hostname;
@@ -7,39 +9,28 @@ ServerClient::ServerClient(const char* hostname, const char* path, uint16_t port
   m_Port = port;
 }
 
-void ServerClient::connect()
-{
-  m_Client->stop();
-
-  if (m_Client->connect(m_Hostname, m_Port)) {
-    m_Connected = true;
-  } else {
-    m_Connected = false;
-  }
-}
-
-void ServerClient::sendRequest(int tipo, uint32_t dato, int direccion, const char* method)
-{
-  m_Args = "?tipo=" + String(tipo) + "&dato=" + String(dato) + "&direccion=" + String(direccion);
-  m_Client->println(String(method) + " " + String(m_Pathname) + m_Args + " HTTP/1.1");
-  m_Client->println("Host: " + String(m_Hostname));
-  m_Client->println("Connection: close");
-  m_Client->println();
-}
-
-String ServerClient::readResponse()
+String ServerClient::sendRequest(int tipo, uint32_t dato, int direccion, const char* method)
 {
   String response = "";
 
-  while (m_Client->available()) {
-    char c = m_Client->read();
-    response += String(c);
+  HTTPClient http;
+  String fullPath = "http://" + String(m_Hostname) + ":" + String(m_Port) + String(m_Pathname) + "?tipo=" + String(tipo) + "&dato=" + String(dato) + "&direccion=" + String(direccion);
+  http.begin(fullPath.c_str());
+
+  if (String(method).equals("GET")) {
+    int responseCode = http.GET();
+    if (responseCode > 0) {
+      Serial.print("HTTP Response code: ");
+      Serial.println(responseCode);
+      response = http.getString();
+    } else {
+      Serial.print("Error code: ");
+      Serial.println(responseCode);
+    }
+  } else {
+    Serial.print(method);
+    Serial.println(" is not a valid method");
   }
 
   return response;
-}
-
-bool ServerClient::getStatus()
-{
-  return m_Connected;
 }

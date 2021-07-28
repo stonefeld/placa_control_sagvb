@@ -29,7 +29,12 @@ namespace Utils {
     Serial.print("\nConnected. My IP address is: ");
     Serial.print(WiFi.localIP());
     Serial.print(". My hostname is: ");
-    Serial.print(WiFi.getHostname());
+    Serial.println(WiFi.getHostname());
+  }
+
+  bool getWiFiStatus() {
+    if (WiFi.status() == WL_CONNECTED) return true;
+    return false;
   }
 
   void printLCD(LiquidCrystal_I2C* lcd, const char* message, int row, int col, bool clear) {
