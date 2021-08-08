@@ -86,15 +86,22 @@ Está más que claro que en los strings correspondientes a cada variable deben e
 ## Imágenes
 Acá dejamos imágenes que podrían ser útiles para utilizar posteriormente al momento del ensamblaje.
 
-**ESP32 Pinout**
+**ESP-WROOM-32 Pinout**
 
-![ESP32 Pinout](https://i.pinimg.com/originals/c6/57/83/c657835e84aaf91832a770ea0d7d0767.jpg)
+![ESP-WROOM-32 Pinout](https://i.pinimg.com/originals/c6/57/83/c657835e84aaf91832a770ea0d7d0767.jpg)
 
 ----
 
 **ESP8266 Pinout**
 
 ![ESP8266 Pinout](https://www.teachmemicro.com/wp-content/uploads/2018/04/NodeMCUv3.0-pinout.jpg)
+
+----
+
+
+**ESP32-CAM Pinout**
+
+![ESP32-CAM Pinout](https://i0.wp.com/randomnerdtutorials.com/wp-content/uploads/2020/03/ESP32-CAM-pinout-new.png?quality=100&strip=all&ssl=1)
 
 ----
 
@@ -124,3 +131,4 @@ Acá dejamos los links que corresponden a las guías definitivas que utilizamos 
 * [Guía de utilización del LCD 16x2 con comunicación por I2C](https://www.electronics-lab.com/project/using-16x2-i2c-lcd-display-esp32/).
 * [Guía de configuración del KeyPad 4x4](https://diyi0t.com/keypad-arduino-esp8266-esp32/).
 * [Guía de configuración del sensor de distancia](https://www.instructables.com/ESP32-With-Ultrasonic-Sensor/) (está un poco desactualizado y los comentarios están en portugués pero sirve igual).
+* [Guía para enviar HTTP Requests al servidor](https://randomnerdtutorials.com/esp32-http-get-post-arduino/)

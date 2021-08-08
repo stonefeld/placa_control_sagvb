@@ -3,7 +3,6 @@
 #include "RDM6300.h"
 #include <LiquidCrystal_I2C.h>
 #include "KeypadWrapper.h"
-#include <Ultrasonic.h>
 
 // Header Files.
 // Tienen que agregar WiFiConfig.h en la carpeta include/ con las dos variables correspondientes a su red WiFi:
@@ -44,12 +43,6 @@ const byte ROWS = 4;
 const byte COLS = 4;
 KeypadWrapper keypad = KeypadWrapper(ROWS, COLS);
 
-// Defino los pines a utilizar por el sensor de distancia.
-#define ULTRASONIC_TRIGGER_PIN 4
-#define ULTRASONIC_ECHO_PIN    5
-unsigned int distance = 0;
-Ultrasonic ultrasonic(ULTRASONIC_TRIGGER_PIN, ULTRASONIC_ECHO_PIN);
-
 void setup() {
   // Para conocer el address del lcd.
 #ifdef LCDSCANNER_ENABLED
@@ -78,8 +71,8 @@ void loop() {
 #ifdef LCDSCANNER_ENABLED
   LCDScanner::scan();
 #else
-  static int tipo = 0; // (Nr de Tarjeta = 0, DNI = 1, Proveedor = 3, Ninguno = 4)
-  static uint32_t dato = 98765432;
+  static int tipo = 4; // Nr de Tarjeta = 0, DNI = 1, Proveedor = 3, Ninguno = 4
+  static uint32_t dato;
 
   if (rdm6300.update()) {
     // Leer los sensores RFID.
@@ -92,27 +85,31 @@ void loop() {
     switch (keypad.getInput())
     {
     case 1:
-      // En este caso se presiono una tecla valida y el largo no es el correcto.
-      if (keypad.getCodeLength() == 0) {
-        Utils::printLCD(&lcd, "Codigo:        ", 0, 0, true);
-        Utils::printLCD(&lcd, String(keypad.getLastKey()).c_str(), keypad.getCodeLength(), 1, false);
-      } else if (keypad.getLastKey() == keypad.enterKey) {
-        // Si la tecla que se presiono era ENTER no escribo el caracter por pantalla y le informo que presione ENTER.
-        Utils::printLCD(&lcd, "Presione ENTER  ", 0, 0, false);
-      }
+      // En este caso se presiono una tecla valida.
+      if (keypad.getCodeLength() == 0) Utils::printLCD(&lcd, "Codigo:        ", 0, 0, true);
+      Utils::printLCD(&lcd, String(keypad.getLastKey()).c_str(), keypad.getCodeLength(), 1, false);
+      tipo = 4;
       break;
 
     case 2:
       // Si se presiono la tecla ENTER y el largo es correcto entonces obtengo el dato y el tipo segun el largo del codigo.
       dato = keypad.getConvertedNumber();
-      if (keypad.getCodeLength() == 7 || keypad.getCodeLength() == 8) tipo = 1;
-      if (keypad.getCodeLength() == 4) tipo = 2;
+      uint32_t length = keypad.getCodeLength();
+      if (length == 7 || length == 8) tipo = 1;
+      if (length == 4) tipo = 2;
       keypad.cleanStream();
       Utils::printLCD(&lcd, "Apoye tarjeta o\nintgrese DNI", 0, 0, true);
       break;
 
+    case 3:
+      // En este caso se presiono una tecla distinta de ENTER y ya alcanzo el largo maximo.
+      Utils::printLCD(&lcd, "Presione ENTER ", 0, 0, false);
+      tipo = 4;
+      break;
+
     case 0:
       tipo = 4;
+      break;
     }
   }
 

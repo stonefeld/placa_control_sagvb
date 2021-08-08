@@ -18,32 +18,28 @@ KeypadWrapper::KeypadWrapper(byte rows, byte cols)
   m_Keypad = new Keypad(makeKeymap(keypadMapping), rowPins, colPins, m_Rows, m_Cols);
 }
 
-// 1 = Presiono tecla, 2 = Presiono Enter y todo OK, 0 = Sin input o error
+// 1 = Presiono tecla, 2 = Presiono ENTER y todo bien, 3 = Presiono tecla pero supero el largo maximo, 0 = No se presiono tecla o hubo un ERROR.
 int KeypadWrapper::getInput()
 {
   char key = m_Keypad->getKey();
 
   if (key) {
     if (key == enterKey) {
-
-        if (isCodeReady()) {
-          return 2;
-        }
-
+        if (isCodeReady()) return 2;
     } else if (key == delKey) {
-
       // Por ahora no hacemos nada.
       return 0;
-
     } else {
-
-      if (m_Index <= 8 && m_Codigo[m_Index] == '\0') {
-        m_Codigo[m_Index] = key;
-        m_LastKey = key;
-        m_Index++;
-        return 1;
+      if (m_Index <= 8) {
+        if (m_Codigo[m_Index] == '\0') {
+          m_Codigo[m_Index] = key;
+          m_LastKey = key;
+          m_Index++;
+          return 1;
+        }
+      } else {
+        return 3;
       }
-
     }
   }
   return 0;
@@ -75,7 +71,6 @@ void KeypadWrapper::cleanStream()
   m_Index = 0;
   m_LastKey = '\0';
   
-  for (int i = 0; i < 9; i++) {
+  for (int i = 0; i < 9; i++)
     m_Codigo[i] = '\0';
-  }
 }
