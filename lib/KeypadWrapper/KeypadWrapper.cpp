@@ -25,7 +25,7 @@ int KeypadWrapper::getInput()
 
 	if (key) {
 		if (key == enterKey) {
-				if (isCodeReady()) return 2;
+			if (isCodeReady()) return 2;
 		} else if (key == delKey) {
 			// Por ahora no hacemos nada.
 			return 0;

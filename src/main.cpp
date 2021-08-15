@@ -108,57 +108,56 @@ void loop() {
 #else
 	if (rfidReader.update()) {
 	// Leer los sensores RFID.
-	tipo = 0;
-	dato = rfidReader.getTagId();
-	Serial.println(dato, HEX);
-	Utils::printLCD(&lcd, "Apoye tarjeta o\nintgrese DNI", 0, 0, true);
-	} else {
-	switch (keypad.getInput())
-	{
-	case 1:
-		// Tecla valida.
-		if (keypad.getCodeLength() == 0) Utils::printLCD(&lcd, "Codigo:        ", 0, 0, true);
-		Utils::printLCD(&lcd, String(keypad.getLastKey()).c_str(), keypad.getCodeLength(), 1, false);
-		tipo = 4;
-		break;
-
-	case 2:
-	{
-		// Tecla ENTER y largo correcto.
-		teclado = true;
-		dato = keypad.getConvertedNumber();
-		uint32_t length = keypad.getCodeLength();
-		if (length == 7 || length == 8) tipo = 1;
-		if (length == 4) tipo = 2;
-		keypad.cleanStream();
+		tipo = 0;
+		dato = rfidReader.getTagId();
+		Serial.println(dato, HEX);
 		Utils::printLCD(&lcd, "Apoye tarjeta o\nintgrese DNI", 0, 0, true);
-	} break;
+	} else {
+		switch (keypad.getInput())
+		{
+		case 1:
+			// Tecla valida.
+			if (keypad.getCodeLength() == 0) Utils::printLCD(&lcd, "Codigo:        ", 0, 0, true);
+			Utils::printLCD(&lcd, String(keypad.getLastKey()).c_str(), keypad.getCodeLength(), 1, false);
+			tipo = 4;
+			break;
 
-	case 3:
-		// Tecla distinta de ENTER y largo maximo.
-		Utils::printLCD(&lcd, "Presione ENTER ", 0, 0, false);
-		tipo = 4;
-		break;
+		case 2:
+		{
+			// Tecla ENTER y largo correcto.
+			teclado = true;
+			dato = keypad.getConvertedNumber();
+			uint32_t length = keypad.getCodeLength();
+			if (length == 7 || length == 8) tipo = 1;
+			if (length == 4) tipo = 2;
+			keypad.cleanStream();
+			Utils::printLCD(&lcd, "Apoye tarjeta o\nintgrese DNI", 0, 0, true);
+		} break;
 
-	case 0:
-		tipo = 4;
-		break;
-	}
+		case 3:
+			// Tecla distinta de ENTER y largo maximo.
+			Utils::printLCD(&lcd, "Presione ENTER ", 0, 0, false);
+			tipo = 4;
+			break;
+
+		case 0:
+			tipo = 4;
+			break;
+		}
 	}
 
 	if ((millis() - lastTime) > WAIT_DELAY) {
 	// Verifcar conexion estable.
-	if (Utils::getWiFiStatus()) {
-		Utils::printLCD(&lcd, "Espere...", 0, 0, true);
-		String response = client.sendRequest(tipo, dato, teclado, DIRECCION, HTTP_METHOD);
-		Serial.println(response);
-	} else {
-		// Reconectar al WiFi.
-		Serial.println("Disconnected from the network");
-		Utils::connectWiFi(SSID, PASSWORD);
-	}
-
-	lastTime = millis();
+		if (Utils::getWiFiStatus()) {
+			Utils::printLCD(&lcd, "Espere...", 0, 0, true);
+			String response = client.sendRequest(tipo, dato, teclado, DIRECCION, HTTP_METHOD);
+			Serial.println(response);
+		} else {
+			// Reconectar al WiFi.
+			Serial.println("Disconnected from the network");
+			Utils::connectWiFi(SSID, PASSWORD);
+		}
+		lastTime = millis();
 	}
 #endif
 }
@@ -167,12 +166,12 @@ void onQrCodeTask(void* pvParameters) {
 	struct QRCodeData qrCodeData;
 
 	while (true) {
-	if (qrReader.receiveQrCode(&qrCodeData, 100)) {
-		if (qrCodeData.valid) {
-		dato = (uint32_t)qrCodeData.payload;
+		if (qrReader.receiveQrCode(&qrCodeData, 100)) {
+			if (qrCodeData.valid) {
+			dato = (uint32_t)qrCodeData.payload;
+			}
 		}
-	}
-	vTaskDelay(100 / portTICK_PERIOD_MS);
+		vTaskDelay(100 / portTICK_PERIOD_MS);
 	}
 }
 /* ---------- END FUNCTION DEFINITION ---------- */
