@@ -77,7 +77,7 @@ Está más que claro que en los strings correspondientes a cada variable deben e
 - [x] Soporte para LCD por comunicación I2C.
 - [x] Soporte para teclado matricial 4x4.
 - [ ] Cambiar configuración para soportar teclado matricial 4x3.
-- [x] Soporte para sensor de distancia HC-SR04.
+- [x] Soporte para lecto de código QR.
 - [x] Programar la lógica que debe seguir el dispositivo en el sistema definitivo.
 - [ ] Pensar ubicación y distribución de las placas.
 - [ ] Ensamblar todo.
