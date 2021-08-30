@@ -2,7 +2,7 @@
 // Descomentar para utilzar el analisis de address del lcd.
 //#define LCDSCANNER_ENABLED
 
-// Defino pin GPIO-09 como RX para la comunicacion con RDM6300.
+// GPIO-09 como RX para RDM6300.
 #define RDM6300_RX_PIN 9
 /* ---------- END DEFINES ---------- */
 
@@ -33,9 +33,15 @@
 /* ---------- GLOBAL VARIABLES ---------- */
 const int DIRECCION = 0; // ENTRADA = 0, SALIDA = 1
 
-// Especifico las dimensiones del keypad.
-const byte ROWS = 4;
-const byte COLS = 4;
+// Caracteristicas del keypad.
+byte rowPins[] = { 19, 18, 17, 16 };
+byte colPins[] = { 32, 33, 25 };
+char keypadMapping[sizeof(rowPins) / sizeof(byte)][sizeof(colPins) / sizeof(byte)] = {
+	{ '1', '2', '3' },
+	{ '4', '5', '6' },
+	{ '7', '8', '9' },
+	{ '*', '0', '#' }
+};
 
 // Declaro las variables para los requests al servidor.
 const uint16_t HTTP_PORT   = 80;
@@ -52,22 +58,21 @@ int tipo = 4;  // Nr de Tarjeta = 0, DNI = 1, Proveedor = 3, Ninguno = 4
 uint32_t dato; // Dato a enviar al servidor.
 /* ---------- END VARIABLES ---------- */
 
-
 /* ---------- OBJECTS ---------- */
-// QR READER
+// // QR READER
 ESP32QRCodeReader qrReader(CAMERA_MODEL_AI_THINKER);
 
-// LCD
-// Especifico address obtenido con LCDScanner y numero de columnas y lineas.
+// // LCD
+// // Especifico address obtenido con LCDScanner y numero de columnas y lineas.
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-// KEYPAD
-KeypadWrapper keypad = KeypadWrapper(ROWS, COLS);
+// // KEYPAD
+KeypadWrapper keypad = KeypadWrapper((char*)keypadMapping, rowPins, colPins, sizeof(rowPins) / sizeof(byte), sizeof(colPins) / sizeof(byte));
 
-// RFID READER
+// // RFID READER
 RDM6300 rfidReader;
 
-// HTTP CLIENT
+// // HTTP CLIENT
 ServerClient client = ServerClient(HOST_NAME, PATH_NAME, HTTP_PORT);
 /* ---------- END OBJECTS ---------- */
 
@@ -85,6 +90,9 @@ void setup() {
 #else
 	// Inicializo la comunicacion serial.
 	Serial.begin(115200);
+
+	// Conecto el dispositivo a la red WiFi.
+	Utils::connectWiFi(SSID, PASSWORD);
 	
 	// Configuro el lector de RFID (RDM6300).
 	rfidReader.begin(RDM6300_RX_PIN);
@@ -93,13 +101,13 @@ void setup() {
 	lcd.init();
 	lcd.backlight();
 
-	// Conecto el dispositivo a la red WiFi.
-	Utils::connectWiFi(SSID, PASSWORD);
-
 	// Mensaje de inicio.
-	Utils::printLCD(&lcd, "Apoye tarjeta o\nintgrese DNI", 0, 0, true);
+	Utils::printLCD(&lcd, "Apoye tarjeta o", 0, 0, true);
+	Utils::printLCD(&lcd, "ingrese DNI", 1, 0, false);
 #endif
 }
+
+String text = "";
 
 void loop() {
 	// Para conocer el address del lcd.
@@ -107,18 +115,19 @@ void loop() {
 	LCDScanner::scan();
 #else
 	if (rfidReader.update()) {
-	// Leer los sensores RFID.
+		// Leer los sensores RFID.
 		tipo = 0;
 		dato = rfidReader.getTagId();
 		Serial.println(dato, HEX);
-		Utils::printLCD(&lcd, "Apoye tarjeta o\nintgrese DNI", 0, 0, true);
+		Utils::printLCD(&lcd, "Apoye tarjeta o", 0, 0, true);
+		Utils::printLCD(&lcd, "ingrese DNI", 1, 0, false);
 	} else {
 		switch (keypad.getInput())
 		{
 		case 1:
 			// Tecla valida.
-			if (keypad.getCodeLength() == 0) Utils::printLCD(&lcd, "Codigo:        ", 0, 0, true);
-			Utils::printLCD(&lcd, String(keypad.getLastKey()).c_str(), keypad.getCodeLength(), 1, false);
+			if (keypad.getCodeLength() == 1) Utils::printLCD(&lcd, "Codigo:        ", 0, 0, true);
+			Utils::printLCD(&lcd, String(keypad.getLastKey()).c_str(), 1, keypad.getCodeLength() - 1, false);
 			tipo = 4;
 			break;
 
@@ -131,12 +140,25 @@ void loop() {
 			if (length == 7 || length == 8) tipo = 1;
 			if (length == 4) tipo = 2;
 			keypad.cleanStream();
-			Utils::printLCD(&lcd, "Apoye tarjeta o\nintgrese DNI", 0, 0, true);
+			Utils::printLCD(&lcd, "Apoye tarjeta o", 0, 0, true);
+			Utils::printLCD(&lcd, "ingrese DNI", 1, 0, false);
 		} break;
 
 		case 3:
 			// Tecla distinta de ENTER y largo maximo.
 			Utils::printLCD(&lcd, "Presione ENTER ", 0, 0, false);
+			tipo = 4;
+			break;
+
+		case 4:
+			// Tecla Backspace.
+			if (keypad.getCodeLength() == 0) {
+				Utils::printLCD(&lcd, "Apoye tarjeta o", 0, 0, true);
+				Utils::printLCD(&lcd, "ingrese DNI", 1, 0, false);
+			} else {
+				Utils::printLCD(&lcd, "Codigo:        ", 0, 0, false);
+				Utils::printLCD(&lcd, " ", 1, keypad.getCodeLength(), false);
+			}
 			tipo = 4;
 			break;
 
@@ -146,8 +168,8 @@ void loop() {
 		}
 	}
 
-	if ((millis() - lastTime) > WAIT_DELAY) {
-	// Verifcar conexion estable.
+	if ((millis() - lastTime) > WAIT_DELAY && tipo != 4) {
+		// Verifcar conexion estable.
 		if (Utils::getWiFiStatus()) {
 			Utils::printLCD(&lcd, "Espere...", 0, 0, true);
 			String response = client.sendRequest(tipo, dato, teclado, DIRECCION, HTTP_METHOD);

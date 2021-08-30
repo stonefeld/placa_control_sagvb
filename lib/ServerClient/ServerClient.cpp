@@ -17,17 +17,23 @@ String ServerClient::sendRequest(int tipo, uint32_t dato, bool teclado, int dire
 	String fullPath = "http://" + String(m_Hostname) + ":" + String(m_Port) + String(m_Pathname) + "?tipo=" + String(tipo) + "&dato=" + String(dato) + "&direccion=" + String(direccion) + "&teclado=" + String(teclado);
 	http.begin(fullPath.c_str());
 
-	if (String(method).equals("GET")) {
+	if (String(method).equals("GET"))
+	{
 		int responseCode = http.GET();
-		if (responseCode > 0) {
+		if (responseCode > 0)
+		{
 			Serial.print("HTTP Response code: ");
 			Serial.println(responseCode);
 			response = http.getString();
-		} else {
+		}
+		else
+		{
 			Serial.print("Error code: ");
 			Serial.println(responseCode);
 		}
-	} else {
+	}
+	else
+	{
 		Serial.print(method);
 		Serial.println(" is not a valid method");
 	}

@@ -1,43 +1,45 @@
 #include "KeypadWrapper.h"
 
-KeypadWrapper::KeypadWrapper(byte rows, byte cols)
-{
-	m_Rows = rows;
-	m_Cols = cols;
-
-	char keypadMapping[m_Rows][m_Cols] = {
-		{ '1', '2', '3', 'A' },
-		{ '4', '5', '6', 'B' },
-		{ '7', '8', '9', 'C' },
-		{ '*', '0', '#', 'D' }
-	};
-	// En ambos casos asignamos segun la numeracion por GPIO.
-	byte rowPins[m_Rows] = { 23, 22, 3, 21 };
-	byte colPins[m_Cols] = { 19, 18, 5, 17 };
-
-	m_Keypad = new Keypad(makeKeymap(keypadMapping), rowPins, colPins, m_Rows, m_Cols);
-}
+KeypadWrapper::KeypadWrapper(char* keypadMapping, byte* rowPins, byte* colPins, byte rowCount, byte colCount)
+	: Keypad(keypadMapping, rowPins, colPins, rowCount, colCount)
+{}
 
 // 1 = Presiono tecla, 2 = Presiono ENTER y todo bien, 3 = Presiono tecla pero supero el largo maximo, 0 = No se presiono tecla o hubo un ERROR.
 int KeypadWrapper::getInput()
 {
-	char key = m_Keypad->getKey();
+	char key = getKey();
 
-	if (key) {
-		if (key == enterKey) {
-			if (isCodeReady()) return 2;
-		} else if (key == delKey) {
-			// Por ahora no hacemos nada.
-			return 0;
-		} else {
-			if (m_Index <= 8) {
-				if (m_Codigo[m_Index] == '\0') {
+	if (key)
+	{
+		if (key == enterKey)
+		{
+			if (isCodeReady())
+				return 2;
+		}
+		else if (key == delKey)
+		{
+			if (m_Index > 0)
+			{
+				m_Index--;
+				m_Codigo[m_Index] = '\0';
+				m_LastKey = m_Codigo[m_Index - 1];
+				return 4;
+			}
+		}
+		else
+		{
+			if (m_Index < 8)
+			{
+				if (m_Codigo[m_Index] == '\0')
+				{
 					m_Codigo[m_Index] = key;
 					m_LastKey = key;
 					m_Index++;
 					return 1;
 				}
-			} else {
+			}
+			else
+			{
 				return 3;
 			}
 		}
@@ -47,7 +49,8 @@ int KeypadWrapper::getInput()
 
 bool KeypadWrapper::isCodeReady()
 {
-	if (m_Index == 8 || m_Index == 7 || m_Index == 4) return true;
+	if (m_Index == 8 || m_Index == 7 || m_Index == 4)
+		return true;
 	return false;
 }
 

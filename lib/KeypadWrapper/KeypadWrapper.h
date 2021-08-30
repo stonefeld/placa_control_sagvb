@@ -1,12 +1,12 @@
 #ifndef KEYPADWRAPPER_H
 #define KEYPADWRAPPER_H
 
-#include <Keypad.h>
+#include "Keypad.h"
 
-class KeypadWrapper
+class KeypadWrapper : Keypad
 {
 public:
-	KeypadWrapper(byte rows, byte cols);
+	KeypadWrapper(char* map, byte* pRows, byte* pCols, byte rows, byte cols);
 
 	int getInput(void);
 	bool isCodeReady(void);
@@ -20,10 +20,6 @@ public:
 	char delKey = '*';
 
 private:
-	Keypad* m_Keypad;
-	byte m_Rows;
-	byte m_Cols;
-
 	byte m_Index = 0;
 	char m_Codigo[9] = { '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0' };
 	char m_LastKey;

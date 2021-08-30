@@ -21,7 +21,8 @@ void RDM6300::begin(int rx_pin, uint8_t uart_nr)
 	m_Stream = m_HardwareSerial = new HardwareSerial(uart_nr);
 	m_HardwareSerial->begin(RDM6300_BAUDRATE, SERIAL_8N1, rx_pin, -1);
 #elif defined(ARDUINO_ARCH_ESP8266)
-	if (rx_pin == 13) {
+	if (rx_pin == 13)
+	{
 		m_Stream = m_HardwareSerial = &Serial;
 		m_HardwareSerial->begin(RDM6300_BAUDRATE, SERIAL_8N1, SERIAL_RX_ONLY);
 		if (uart_nr)
@@ -29,7 +30,8 @@ void RDM6300::begin(int rx_pin, uint8_t uart_nr)
 	}
 #endif
 #ifdef RDM6300_SOFTWARE_SERIAL
-	if (!m_Stream) {
+	if (!m_Stream)
+	{
 		m_Stream = m_SoftwareSerial = new SoftwareSerial(rx_pin, -1);
 		m_SoftwareSerial->begin(RDM6300_BAUDRATE);
 	}
@@ -112,7 +114,8 @@ bool RDM6300::update()
 		return false;
 
 	// Si el ultimo tag leido es distinto del actual le asigno el nuevo valor y reinicio el tiempo.
-	if (m_LastTagId != tag_id) {
+	if (m_LastTagId != tag_id)
+	{
 		m_LastTagId = tag_id;
 		m_LastReadMs = 0;
 	}
