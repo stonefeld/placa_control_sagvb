@@ -55,7 +55,7 @@ const unsigned long WAIT_DELAY = 5000;
 
 bool teclado = false;
 int tipo = 4;  // Nr de Tarjeta = 0, DNI = 1, Proveedor = 3, Ninguno = 4
-uint32_t dato; // Dato a enviar al servidor.
+uint32_t dato = 0; // Dato a enviar al servidor.
 /* ---------- END VARIABLES ---------- */
 
 /* ---------- OBJECTS ---------- */
@@ -83,7 +83,8 @@ void onQrCodeTask(void *pvParameters);
 
 
 /* ---------- FUNCTION DEFINITION ---------- */
-void setup() {
+void setup()
+{
 	// Para conocer el address del lcd.
 #ifdef LCDSCANNER_ENABLED
 	LCDScanner::begin();
@@ -92,7 +93,7 @@ void setup() {
 	Serial.begin(115200);
 
 	// Conecto el dispositivo a la red WiFi.
-	Utils::connectWiFi(SSID, PASSWORD);
+	String ipAddr = Utils::connectWiFi(SSID, PASSWORD);
 	
 	// Configuro el lector de RFID (RDM6300).
 	rfidReader.begin(RDM6300_RX_PIN);
@@ -101,32 +102,47 @@ void setup() {
 	lcd.init();
 	lcd.backlight();
 
+	// Mensaje de estado de conexion a WiFi.
+	if (Utils::getWiFiStatus())
+	{
+		Utils::printLCD(&lcd, SSID, 0, 0, true);
+		Utils::printLCD(&lcd, ipAddr.c_str(), 1, 0, false);
+	}
+	else
+	{
+		Utils::printLCD(&lcd, "Desconectado", 0, 0, true);
+	}
+	delay(2000);
+
 	// Mensaje de inicio.
 	Utils::printLCD(&lcd, "Apoye tarjeta o", 0, 0, true);
 	Utils::printLCD(&lcd, "ingrese DNI", 1, 0, false);
 #endif
 }
 
-String text = "";
-
-void loop() {
+void loop()
+{
 	// Para conocer el address del lcd.
 #ifdef LCDSCANNER_ENABLED
 	LCDScanner::scan();
 #else
-	if (rfidReader.update()) {
+	if (rfidReader.update())
+	{
 		// Leer los sensores RFID.
 		tipo = 0;
 		dato = rfidReader.getTagId();
 		Serial.println(dato, HEX);
 		Utils::printLCD(&lcd, "Apoye tarjeta o", 0, 0, true);
 		Utils::printLCD(&lcd, "ingrese DNI", 1, 0, false);
-	} else {
+	}
+	else
+	{
 		switch (keypad.getInput())
 		{
 		case 1:
 			// Tecla valida.
-			if (keypad.getCodeLength() == 1) Utils::printLCD(&lcd, "Codigo:        ", 0, 0, true);
+			if (keypad.getCodeLength() == 1)
+				Utils::printLCD(&lcd, "Codigo:        ", 0, 0, true);
 			Utils::printLCD(&lcd, String(keypad.getLastKey()).c_str(), 1, keypad.getCodeLength() - 1, false);
 			tipo = 4;
 			break;
@@ -152,10 +168,13 @@ void loop() {
 
 		case 4:
 			// Tecla Backspace.
-			if (keypad.getCodeLength() == 0) {
+			if (keypad.getCodeLength() == 0)
+			{
 				Utils::printLCD(&lcd, "Apoye tarjeta o", 0, 0, true);
 				Utils::printLCD(&lcd, "ingrese DNI", 1, 0, false);
-			} else {
+			}
+			else
+			{
 				Utils::printLCD(&lcd, "Codigo:        ", 0, 0, false);
 				Utils::printLCD(&lcd, " ", 1, keypad.getCodeLength(), false);
 			}
@@ -168,15 +187,25 @@ void loop() {
 		}
 	}
 
-	if ((millis() - lastTime) > WAIT_DELAY && tipo != 4) {
+	if ((millis() - lastTime) > WAIT_DELAY && tipo != 4)
+	{
 		// Verifcar conexion estable.
-		if (Utils::getWiFiStatus()) {
+		if (Utils::getWiFiStatus())
+		{
 			Utils::printLCD(&lcd, "Espere...", 0, 0, true);
 			String response = client.sendRequest(tipo, dato, teclado, DIRECCION, HTTP_METHOD);
-			Serial.println(response);
-		} else {
+			Utils::printLCD(&lcd, response.c_str(), 1, 0, false);
+			delay(5000);
+			Utils::printLCD(&lcd, "Apoye tarjeta o", 0, 0, true);
+			Utils::printLCD(&lcd, "ingrese DNI", 1, 0, false);
+			tipo = 4;
+			dato = 0;
+			teclado = false;
+		}
+		else
+		{
 			// Reconectar al WiFi.
-			Serial.println("Disconnected from the network");
+			Utils::printLCD(&lcd, "Desconectado", 0, 0, true);
 			Utils::connectWiFi(SSID, PASSWORD);
 		}
 		lastTime = millis();
@@ -184,14 +213,16 @@ void loop() {
 #endif
 }
 
-void onQrCodeTask(void* pvParameters) {
+void onQrCodeTask(void* pvParameters)
+{
 	struct QRCodeData qrCodeData;
 
-	while (true) {
-		if (qrReader.receiveQrCode(&qrCodeData, 100)) {
-			if (qrCodeData.valid) {
-			dato = (uint32_t)qrCodeData.payload;
-			}
+	while (true)
+	{
+		if (qrReader.receiveQrCode(&qrCodeData, 100))
+		{
+			if (qrCodeData.valid)
+				dato = (uint32_t)qrCodeData.payload;
 		}
 		vTaskDelay(100 / portTICK_PERIOD_MS);
 	}
