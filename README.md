@@ -20,10 +20,11 @@ En esta sección les explico que necesitan para poder compilar el código.
 
 ### Hardware
 * `Nodemcu-ESP32`: Es la placa ESP que vamos a utilizar.
+* `ESP32-CAM`: Es la placa ESP que vamos a utilizar para el control de la salida que tiene un módulo de cámara.
 * `Display LCD 16x2`: El display LCD, pero como vamos a utilizar el protocolo I2C para la comunicación con el ESP, en caso de no venir integrado necesitamos también:
   * `Adaptador I2C Display LCD PCF8754`: Que se suelda directamente a los pines del LCD.
 * `Teclado Matricial 4x3`: Que en el código por el momento asumimos que es 4x4 para la prueba, pero cuando entendamos bien como funciona lo cambiamos a 4x3.
-* `HR-SR04 Sensor de Distancia`
+* `RDM6300`: Que es el lector de tarjetas RFID.
 
 ## Aclaraciones
 Para poder compilar el código necesitan tener en cuenta los siguientes puntos:
@@ -76,8 +77,8 @@ Está más que claro que en los strings correspondientes a cada variable deben e
 - [x] Soporte para RDM6300.
 - [x] Soporte para LCD por comunicación I2C.
 - [x] Soporte para teclado matricial 4x4.
-- [ ] Cambiar configuración para soportar teclado matricial 4x3.
-- [x] Soporte para lecto de código QR.
+- [x] Cambiar configuración para soportar teclado matricial 4x3.
+- [x] Soporte para lector de código QR.
 - [x] Programar la lógica que debe seguir el dispositivo en el sistema definitivo.
 - [ ] Pensar ubicación y distribución de las placas.
 - [ ] Ensamblar todo.
@@ -132,3 +133,8 @@ Acá dejamos los links que corresponden a las guías definitivas que utilizamos 
 * [Guía de configuración del KeyPad 4x4](https://diyi0t.com/keypad-arduino-esp8266-esp32/).
 * [Guía de configuración del sensor de distancia](https://www.instructables.com/ESP32-With-Ultrasonic-Sensor/) (está un poco desactualizado y los comentarios están en portugués pero sirve igual).
 * [Guía para enviar HTTP Requests al servidor](https://randomnerdtutorials.com/esp32-http-get-post-arduino/)
+* Para poder utilizar la placa ESP32-CAM utilicé una serie de tutoriales:
+  * [Para programar la placa con un arduino.](https://technoreview85.com/how-to-program-esp-32-cam-using-arduino-uno-board/)
+  * [El mismo tutorial pero en video de YouTube.](https://youtu.be/5XCb3t8J4Kg)
+  * [Otro tutorial similar](https://randomnerdtutorials.com/esp32-cam-video-streaming-face-recognition-arduino-ide/)
+  * Como tuve unos problemas luego de la flashear la memoria tuve que leer [este issue en GitHub](https://github.com/espressif/esp32-camera/issues/118) y [este otro](https://github.com/espressif/esp32-camera/issues/102)
